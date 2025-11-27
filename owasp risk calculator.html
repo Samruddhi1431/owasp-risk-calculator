@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OWASP Risk Calculator - AI Enhanced</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/owasp_risk.css">
+</head>
+<body>
+
+<div class="container mt-5">
+    <h1 class="text-center mb-4">OWASP Risk Calculator 🤖 (AI Enhanced)</h1>
+    <p class="text-center text-muted">Project enhanced with Weighted Scoring, History Log, and Gemini AI Chatbot.</p>
+    
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0">1. Likelihood Factors (L)</h4>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>Threat Agent Factors (TA)</h5>
+                    <div class="form-group">
+                        <label for="sl">Skill Level:</label>
+                        <select class="form-control" id="sl" onchange="calc_score()">
+                            <option value="1">No technical skill (1)</option>
+                            <option value="3">Some technical skill (3)</option>
+                            <option value="6">Advanced skill (6)</option>
+                            <option value="9">Security Penetration Skills (9)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="motive">Motive:</label>
+                        <select class="form-control" id="motive" onchange="calc_score()">
+                            <option value="1">None (1)</option>
+                            <option value="3">Low reward (3)</option>
+                            <option value="6">Moderate reward (6)</option>
+                            <option value="9">High reward/Financial gain (9)</option>
+                        </select>
+                        <div class="form-check mt-1">
+                            <input class="form-check-input" type="checkbox" id="weight_motive" onchange="calc_score()">
+                            <label class="form-check-label" for="weight_motive">Apply 1.5x Weight</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="oppor">Opportunity:</label>
+                        <select class="form-control" id="oppor" onchange="calc_score()">
+                            <option value="1">Full access required (1)</option>
+                            <option value="4">Some access required (4)</option>
+                            <option value="7">Limited access required (7)</option>
+                            <option value="9">No access required/Anonymous (9)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="size">Size:</label>
+                        <select class="form-control" id="size" onchange="calc_score()">
+                            <option value="1">Single attacker (1)</option>
+                            <option value="3">Small group (3)</option>
+                            <option value="6">Large group (6)</option>
+                            <option value="9">Anonymous internet users (9)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <h5>Vulnerability Factors (VF)</h5>
+                    <div class="form-group">
+                        <label for="eod">Ease of Discovery:</label>
+                        <select class="form-control" id="eod" onchange="calc_score()">
+                            <option value="1">Difficult (1)</option>
+                            <option value="3">Known by security experts (3)</option>
+                            <option value="6">Known to general public (6)</option>
+                            <option value="9">Automated tools available (9)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="eoe">Ease of Exploit:</label>
+                        <select class="form-control" id="eoe" onchange="calc_score()">
+                            <option value="1">Difficult (1)</option>
+                            <option value="3">Medium difficulty (3)</option>
+                            <option value="6">Easy, requires specific tools (6)</option>
+                            <option value="9">Automated tools available (9)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="aware">Awareness:</label>
+                        <select class="form-control" id="aware" onchange="calc_score()">
+                            <option value="1">Hidden (1)</option>
+                            <option value="3">Private knowledge (3)</option>
+                            <option value="6">Public knowledge (6)</option>
+                            <option value="9">Publicized by security community (9)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="intrude">Intrusion Detection:</label>
+                        <select class="form-control" id="intrude" onchange="calc_score()">
+                            <option value="1">Logged and reviewed (1)</option>
+                            <option value="3">Logged but not reviewed (3)</option>
+                            <option value="6">Not logged (6)</option>
+                            <option value="9">Not logged and un-traceable (9)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header bg-danger text-white">
+            <h4 class="mb-0">2. Impact Factors (I)</h4>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>Technical Impact Factors (TI)</h5>
+                    <div class="form-group">
+                        <label for="loc">Loss of Confidentiality:</label>
+                        <select class="form-control" id="loc" onchange="calc_score()">
+                            <option value="1">Minimal data disclosed (1)</option>
+                            <option value="3">Sensitive data disclosed (3)</option>
+                            <option value="6">Highly sensitive data disclosed (6)</option>
+                            <option value="9">All data disclosed (9)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="loi">Loss of Integrity:</label>
+                        <select class="form-control" id="loi" onchange="calc_score()">
+                            <option value="1">Minimal data corruption (1)</option>
+                            <option value="3">Moderate data corruption (3)</option>
+                            <option value="6">Major data corruption (6)</option>
+                            <option value="9">All data totally corrupt (9)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="loa">Loss of Availability:</label>
+                        <select class="form-control" id="loa" onchange="calc_score()">
+                            <option value="1">Minimal downtime (1)</option>
+                            <option value="3">Moderate downtime (3)</option>
+                            <option value="6">Major downtime (6)</option>
+                            <option value="9">All services completely lost (9)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="loacc">Loss of Accountability:</label>
+                        <select class="form-control" id="loacc" onchange="calc_score()">
+                            <option value="1">Fully traceable (1)</option>
+                            <option value="3">Partially traceable (3)</option>
+                            <option value="6">Difficult to trace (6)</option>
+                            <option value="9">Completely anonymous (9)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <h5>Business Impact Factors (BI)</h5>
+                    <div class="form-group">
+                        <label for="finan">Financial Damage:</label>
+                        <select class="form-control" id="finan" onchange="calc_score()">
+                            <option value="1">Minimal effect (1)</option>
+                            <option value="3">Loss of minor revenue (3)</option>
+                            <option value="6">Significant effect on profit (6)</option>
+                            <option value="9">Bankruptcy/Major fine (9)</option>
+                        </select>
+                        <div class="form-check mt-1">
+                            <input class="form-check-input" type="checkbox" id="weight_finan" onchange="calc_score()">
+                            <label class="form-check-label" for="weight_finan">Apply 1.5x Weight</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="reput">Reputation Damage:</label>
+                        <select class="form-control" id="reput" onchange="calc_score()">
+                            <option value="1">Minimal damage (1)</option>
+                            <option value="3">Customer confidence loss (3)</option>
+                            <option value="6">Brand damage (6)</option>
+                            <option value="9">Loss of reputation, major public scandal (9)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="comply">Non-Compliance:</label>
+                        <select class="form-control" id="comply" onchange="calc_score()">
+                            <option value="1">None (1)</option>
+                            <option value="3">Minor violation (3)</option>
+                            <option value="6">Regulatory violation (6)</option>
+                            <option value="9">High profile violation, legal action (9)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="privacy">Privacy Violation:</label>
+                        <select class="form-control" id="privacy" onchange="calc_score()">
+                            <option value="1">Less than 10 people (1)</option>
+                            <option value="3">Hundreds of people (3)</option>
+                            <option value="6">Thousands of people (6)</option>
+                            <option value="9">Millions of people (9)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header bg-success text-white">
+            <h4 class="mb-0">3. Overall Risk Score (L x I)</h4>
+        </div>
+        <div class="card-body">
+            <div class="row text-center">
+                <div class="col-md-4">
+                    <h5>Likelihood Average</h5>
+                    <span id="like_score" class="btn btn-primary btn-lg">0</span>
+                </div>
+                <div class="col-md-4">
+                    <h5>Impact Average</h5>
+                    <span id="impact_score" class="btn btn-primary btn-lg">0</span>
+                </div>
+                <div class="col-md-4">
+                    <h5>Final Risk</h5>
+                    <span id="overall_score" class="btn btn-dark btn-lg">0</span>
+                </div>
+            </div>
+            
+            <div class="mt-4">
+                <input type="text" id="vuln_name" class="form-control mb-2" placeholder="Enter Vulnerability Name (e.g., Unsafe File Upload)">
+                <button class="btn btn-primary btn-block" onclick="saveAssessment()">Save Assessment to History</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">Risk Factor Visualization</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="myChart"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header bg-secondary text-white">
+                    <h5 class="mb-0">Assessment History Log</h5>
+                </div>
+                <div class="card-body">
+                    <div id="history_output">
+                        </div>
+                    <button class="btn btn-outline-danger btn-sm mt-3" onclick="clearHistory()">Clear History</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="chatbot-container">
+    <button id="chatbot-toggle" onclick="toggleChat()">Risk Assistant</button>
+    <div id="chatbot-window">
+        <div id="chat-header">Gemini AI Assistant</div>
+        <div id="chat-history">
+            <p class="bot-message">Hello! I'm Gemini, your AI Risk Assistant. I can explain any factor or risk concept.</p>
+        </div>
+        <form id="chat-form" onsubmit="event.preventDefault(); processUserInput();"> 
+            <input type="text" id="user-input" placeholder="Ask Gemini about a risk factor..." required>
+            <button type="submit">Send</button>
+        </form>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"></script>
+<script src="js/owasp_script.js"></script>
+
+</body>
+</html>
